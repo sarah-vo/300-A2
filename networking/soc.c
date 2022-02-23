@@ -8,7 +8,6 @@
 // this is the whole code by Brian Fraser
 
 #define MAX_UDP 65535   // a theoretical limit for a UDP datagram
-#define PORT 22110
 
 int static sd; // socket descriptor
 
@@ -35,7 +34,8 @@ void socket_initialize(int port){
     }
 }
 
-void socket_receive(){
+void socket_close()
+{
 
 }
 
