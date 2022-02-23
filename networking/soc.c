@@ -41,9 +41,9 @@ void socket_receive(){
 
 int main()
 {
-    
 
-    
+
+    socket_initialize(PORT);
 
     // socket_receive()
     while(1){
