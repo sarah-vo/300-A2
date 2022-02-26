@@ -78,6 +78,36 @@ build CMakeFiles/A2.dir/main.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CM
   OBJECT_DIR = CMakeFiles/A2.dir
   OBJECT_FILE_DIR = CMakeFiles/A2.dir
 
+build CMakeFiles/A2.dir/input.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CMPT_300/A2/input.c || cmake_object_order_depends_target_A2
+  DEP_FILE = CMakeFiles/A2.dir/input.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11
+  OBJECT_DIR = CMakeFiles/A2.dir
+  OBJECT_FILE_DIR = CMakeFiles/A2.dir
+
+build CMakeFiles/A2.dir/output.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CMPT_300/A2/output.c || cmake_object_order_depends_target_A2
+  DEP_FILE = CMakeFiles/A2.dir/output.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11
+  OBJECT_DIR = CMakeFiles/A2.dir
+  OBJECT_FILE_DIR = CMakeFiles/A2.dir
+
+build CMakeFiles/A2.dir/send.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CMPT_300/A2/send.c || cmake_object_order_depends_target_A2
+  DEP_FILE = CMakeFiles/A2.dir/send.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11
+  OBJECT_DIR = CMakeFiles/A2.dir
+  OBJECT_FILE_DIR = CMakeFiles/A2.dir
+
+build CMakeFiles/A2.dir/receive.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CMPT_300/A2/receive.c || cmake_object_order_depends_target_A2
+  DEP_FILE = CMakeFiles/A2.dir/receive.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11
+  OBJECT_DIR = CMakeFiles/A2.dir
+  OBJECT_FILE_DIR = CMakeFiles/A2.dir
+
+build CMakeFiles/A2.dir/soc.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CMPT_300/A2/soc.c || cmake_object_order_depends_target_A2
+  DEP_FILE = CMakeFiles/A2.dir/soc.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11
+  OBJECT_DIR = CMakeFiles/A2.dir
+  OBJECT_FILE_DIR = CMakeFiles/A2.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target A2
@@ -86,7 +116,7 @@ build CMakeFiles/A2.dir/main.c.o: C_COMPILER__A2_Debug /Users/sarah/Documents/CM
 #############################################
 # Link the executable A2
 
-build A2: C_EXECUTABLE_LINKER__A2_Debug CMakeFiles/A2.dir/main.c.o
+build A2: C_EXECUTABLE_LINKER__A2_Debug CMakeFiles/A2.dir/main.c.o CMakeFiles/A2.dir/input.c.o CMakeFiles/A2.dir/output.c.o CMakeFiles/A2.dir/send.c.o CMakeFiles/A2.dir/receive.c.o CMakeFiles/A2.dir/soc.c.o
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk
   OBJECT_DIR = CMakeFiles/A2.dir
   POST_BUILD = :
