@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -13,22 +14,16 @@ static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
 static int sd_out;
 static char* rxMsg;
 
-void* output_print(char* msgRx);
-
 void output_initialize()
 {
-    if(pthread_create(&thread_output, NULL, output_print, NULL) != 0){
+    // create a pthread_t thread_output and check if it's successfully completed
+    if(pthread_create(&thread_output, NULL, output_consume, NULL) != 0){
         printf("Error: failed to create a output thread.\n");
         exit(EXIT_FAILURE);
     }
 }
 
-void output_consume()
-{
-    
-}
-
-void *output_print(char* msgTx)
+void *output_consume(void* unused)
 {
     // socket_address
     struct sockaddr_in sin_out;

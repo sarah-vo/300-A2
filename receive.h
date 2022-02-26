@@ -3,7 +3,7 @@
 
 void receive_initialize();
 
-void receive_produce(char* msgRx);
+void* receive_produce(void* unused);
 
 void receive_terminate();
 

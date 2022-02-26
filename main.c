@@ -3,9 +3,10 @@
 #include "send.h"
 #include "receive.h"
 #include "output.h"
+#include "soc.h"
 
 
-int main(int argc,char **argv[]) {
+int main(int argc,char *argv[]) {
     if(argc != 4){
         printf("Error: make sure to type main [your port number][remote machine name][remote port number]\n");
         return 1;
@@ -15,6 +16,8 @@ int main(int argc,char **argv[]) {
     char* rMachine = argv[2];
     char* rPort = argv[3];
 
-    socket_initialize();
+    socket_initialize(port, rMachine);
+    receive_initialize();
+    output_initialize();
     
 }
