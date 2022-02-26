@@ -16,4 +16,5 @@ int main(int argc,char **argv[]) {
     char* rPort = argv[3];
 
     socket_initialize();
+    
 }
