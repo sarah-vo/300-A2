@@ -35,6 +35,10 @@ void *output_consume(void* unused)
         {
             // pthread_cond_wait(&empty_out, &mutex_out);
             rxMsg = receive_get_msg();
+            if(puts(rxMsg) < 0){
+                perror("Error: failed to print the output to the screen.\n");
+                exit(EXIT_FAILURE);
+            }
         }
         pthread_mutex_unlock(&mutex_out);
     }
@@ -42,5 +46,5 @@ void *output_consume(void* unused)
 
 void output_terminate()
 {
-    
+    pthread_cancel(thread_output);
 }
