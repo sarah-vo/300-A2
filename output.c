@@ -6,10 +6,11 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include "output.h"
+#include "receive.h"
 #include "list.h"
 
 static pthread_t thread_output;
-static pthread_cond_t cond_out = PTHREAD_COND_INITIALIZER;
+static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
 static int sd_out;
 static char* rxMsg;
@@ -25,17 +26,15 @@ void output_initialize()
 
 void *output_consume(void* unused)
 {
-    // socket_address
-    struct sockaddr_in sin_out;
-    memset(&sin_out, 0, sizeof(sin_out));
-    sin_out.sin_family = AF_INET;
-    sin_out.sin_addr.s_addr = htonl(INADDR_ANY);
-    // sin_out.sin_port = htons();
 
-    while(1){    
+    while(1){
+        
+        // Check and wait until receive_thread signals to consume and print
+           
         pthread_mutex_lock(&mutex_out);
         {
-            pthread_cond_signal(&cond_out);
+            // pthread_cond_wait(&empty_out, &mutex_out);
+            rxMsg = receive_get_msg();
         }
         pthread_mutex_unlock(&mutex_out);
     }
