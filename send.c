@@ -14,53 +14,57 @@
 static pthread_t sendThread;
 struct sockaddr_in remoteAddress;
 socklen_t remoteAddress_len;
+struct addrinfo *addrInfo;
+
 //using sd from soc.h
 
-void addr_initialize(char* rPort, char* rHostname){
+//TODO TEST FUNC
+pthread_mutex_t mutexTEST = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t condTEST = PTHREAD_COND_INITIALIZER;
 
-    //initializing hints
-    struct addrinfo hints;
-    bzero(&hints, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_canonname = rHostname;
-    hints.ai_protocol = SOCK_DGRAM;
-    hints.ai_flags = AI_PASSIVE;
+void addr_initialize(char* rPort, char* rHostname)
+{
 
     //applying getaddrinfo
-    struct addrinfo *addrInfo;
-    if(getaddrinfo(rHostname,rPort, &hints, &addrInfo) != 0){
-        printf("Getting address info failed!\n");
-        exit(EXIT_FAILURE);
-    }
 
-    //initializing and parsing IP address to remoteAddress
-    bzero(&remoteAddress, sizeof(remoteAddress));
-    remoteAddress.sin_family = AF_INET;
-    remoteAddress.sin_port = htons(atoi(rPort));
-    if(inet_pton(AF_INET, addrInfo->ai_addr->sa_data, &remoteAddress.sin_addr) != 1){
-        printf("Parsing IP data failed!\n");
+    if(getaddrinfo(rHostname,rPort, NULL, &addrInfo) != 0){
+        printf("Getting address info failed!\n");
         exit(EXIT_FAILURE);
     }
     remoteAddress_len = addrInfo->ai_addrlen;
 
-    //freeing addrInfo
-    freeaddrinfo(addrInfo);
-}
+//    //initializing and parsing IP address to remoteAddress
+//    bzero(&remoteAddress, sizeof(remoteAddress));
+//    remoteAddress.sin_family = AF_INET;
+//    remoteAddress.sin_port = htons(atoi(rPort));
+//    remoteAddress = (struct sockaddr_in)(addrInfo->ai_addr);
+//    if(inet_pton(AF_INET, addrInfo->ai_addr, &remoteAddress.sin_addr) != 1){
+//        printf("Parsing IP data failed!\n");
+//        exit(EXIT_FAILURE);
+//    }
 
+
+//    //freeing addrInfo
+//    freeaddrinfo(addrInfo);
+}
 
 void* sendRoutine(){
     while(true){
 
         char* msg = input_read();
-        long bytes_sent = sendto(sd, msg, strlen(msg), 0, (struct sockaddr*)&remoteAddress, remoteAddress_len);
+        long bytes_sent = sendto(sd, msg, strlen(msg), 0, addrInfo->ai_addr, addrInfo->ai_addrlen);
         if (bytes_sent == -1){
             printf("Send routine failed! \n");
             exit(EXIT_FAILED);
         }
+        else{
+            printf("Send successfully!");
+        }
         //Terminate if "!" is detected
         if(strcmp(msg,"!\n") == 0){
             free(msg);
-            main_terminate();
+            //TODO FILL IN MAIN_TERMINATE
+            //main_terminate();
         }
         else {
             free(msg);
@@ -69,17 +73,20 @@ void* sendRoutine(){
 }
 
 void send_initialize(char* rPort, char* rHostname){
-    addr_initialize(rPort, rHostname);
 
     bool threadCreated = (pthread_create(&sendThread, NULL, sendRoutine, NULL) == 0);
     if(!threadCreated){
         printf("Thread creation failed!\n");
         exit(EXIT_THREAD_FAIL);
     }
+    addr_initialize(rPort, rHostname);
+
+
+
 
 
 }
-////TODO TEST FUNCTION
+//////TODO TEST FUNCTION
 //int main(int argc, char* args[]){
 //    char* localPort = args[1];
 //    char* remoteName = args[2];
@@ -87,6 +94,9 @@ void send_initialize(char* rPort, char* rHostname){
 //    socket_initialize(localPort);
 //    input_initialize();
 //    send_initialize(remotePort, remoteName);
+//    struct addrInfo *test = addrInfo;
+//    pthread_join(sendThread, NULL);
+//
 //}
 
 void send_terminate(){
@@ -97,3 +107,4 @@ void send_terminate(){
         exit(EXIT_THREAD_FAIL);
     }
 }
+

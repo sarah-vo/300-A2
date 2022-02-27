@@ -9,6 +9,7 @@
 static List* input_list;
 static pthread_mutex_t sendMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t inputThread;
+pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 
 
 
@@ -61,7 +62,7 @@ void *inputRoutine(){
         //push to list
         input_prepend(msg);
         //TODO TEST FUNCTION
-        //printf("%s", input_read());
+        printf("%s", input_read());
     }
 }
 
@@ -75,11 +76,14 @@ void input_initialize(){
         printf("Input thread failed to initialize!\n");
         exit(EXIT_THREAD_FAIL);
     }
+
+
 }
 
 //TODO TEST FUNCTION
 //int main(){
 //    input_initialize();
+//    pthread_join(inputThread, NULL);
 //    return 1;
 //}
 

@@ -16,8 +16,16 @@ add_executable(
         soc.c soc.h global_var.c main.h)
 
 add_executable(
+        inputDEBUG
         input.c
         list.o
-
         global_var.c)
 
+add_executable(
+        sendDEBUG
+        input.c
+        list.o
+        global_var.c global_var.h
+        soc.c
+        send.c
+)

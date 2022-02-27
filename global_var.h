@@ -17,5 +17,4 @@ static int EXIT_LIST_FAIL = -3;
 static int EXIT_READ_FAIL = -4;
 
 //signals
-pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 #endif //A2_GLOBAL_VAR_H

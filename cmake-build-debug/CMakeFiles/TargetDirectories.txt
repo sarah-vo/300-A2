@@ -1,4 +1,5 @@
 /home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/input.c.dir
-/home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/edit_cache.dir
 /home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/A2.dir
+/home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/inputDEBUG.dir
+/home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/sarah/CLionProjects/a2/cmake-build-debug/CMakeFiles/sendDEBUG.dir
