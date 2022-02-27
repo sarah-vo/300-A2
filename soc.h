@@ -1,7 +1,9 @@
 #ifndef A2_SOC_H
 #define A2_SOC_H
 
-void socket_initialize(char* port, char* rMachine);
+int sd;     // socket descriptor
+
+void socket_initialize(char* port);
 
 void socket_close();
 
