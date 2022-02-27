@@ -3,7 +3,8 @@
 
 void input_initialize();
 
-void* input();
+
+char* input_read();
 
 void input_terminate();
 

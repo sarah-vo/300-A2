@@ -13,11 +13,11 @@ add_executable(
         output.c output.c
         send.c send.h
         receive.c receive.h
-        soc.c soc.h)
+        soc.c soc.h global_var.c main.h)
 
 add_executable(
         input.c
         list.o
 
-)
+        global_var.c)
 
