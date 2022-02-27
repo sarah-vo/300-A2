@@ -1,7 +1,7 @@
 #ifndef A2_INPUT_H
 #define A2_INPUT_H
 
-void* input_initialize();
+void input_initialize();
 
 void* input();
 

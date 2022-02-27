@@ -3,7 +3,7 @@ all:
 	gcc -g main.c soc.c output.c receive.c list.o -o s-talk -lpthread
 
 input:
-	gcc -g input.c -o input -lpthread
+	gcc -g input.c list.o -o input -lpthread
 
 clean:
 	rm soc

@@ -7,12 +7,12 @@
 #include <string.h>
 
 static List* input_list;
+static pthread_mutex_t sendMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t emptyCond = PTHREAD_COND_INITIALIZER;
 static pthread_t threadPID;
 
 
-
-
-void* input_initialize(){
+void input_initialize(){
     input_list = List_create();
     if(input_list == NULL){
         printf("Input list failed to initialize!\n");
@@ -22,49 +22,70 @@ void* input_initialize(){
         printf("Input thread failed to initialize!\n");
         exit(EXIT_THREAD_FAIL);
     }
-    
+    //TODO TEST FUNCTION
+    //pthread_join(threadPID,NULL);
+
 }
 
-void input_push(char* msg) {
-    List_prepend(input_list, msg);
-    free(msg);
+//Reads message from last position of list and delete it. The last one is the oldest message.
+char* input_read(){
+    char *msg = NULL;
+    pthread_mutex_lock(&sendMutex);
+    {
+        if(List_count(input_list) <= 0){
+            pthread_cond_wait(&emptyCond, &sendMutex);
+        }
+        else{
+            msg = List_trim(input_list);
+        }
+    }
+    pthread_mutex_unlock(&sendMutex);
+    return msg;
+}
+
+void input_prepend(char* msg) {
+    pthread_mutex_lock(&sendMutex);
+    {
+        int PREPEND_SUCCESS = (List_prepend(input_list, msg) == 0);
+        if (!PREPEND_SUCCESS) {
+            printf("Failed to prepend to input list!\n");
+            free(msg);
+            exit(EXIT_LIST_FAIL);
+        }
+        else if(List_count(input_list) == 1){
+            pthread_cond_signal(&emptyCond);
+        }
+    }
+    pthread_mutex_unlock(&sendMutex);
 }
 
 void *input(){
-    while(true){
+    while(1){
         //read user input
         char msg[MAX_LEN];
-//        int counter; //TEST FUNCTION
         if (!fgets(msg, sizeof msg, stdin)) {
             printf("Reading message failed!");
             exit(EXIT_READ_INPUT);
         }
-//        //TEST FUNCTION
-//        else{
-//            counter = 1;
-//        }
-//        if(counter == 1){
-//            printf("%s", msg);
-//            counter = 0;
-//        }
-        int len = strlen(msg);
-        char* pMessage = (char*)malloc(len);
-        memcpy(pMessage, msg, len);
+
+        int len = (int)strlen(msg);
+        char* pMessage = (char*)malloc(len + 1);
+        strcpy(pMessage, msg);
         //push to list
-        input_push(msg);
+        input_prepend(msg);
+        //TODO TEST FUNCTION
+        //printf("%s", input_read());
     }
 }
+//TODO TEST FUNCTION
+//int main(){
+//    input_initialize();
+//    return 1;
+//}
 
-int main(){
-    input();
-    return 1;
-}
 
 
-char* input_read(){
-    char* msg = List_trim(input_list);
-    return msg;
-}
+
 
 
 void freeItem(void* item){
@@ -73,7 +94,7 @@ void freeItem(void* item){
 
 void input_terminate(){
     List_first(input_list);
-    List_free(input_list, (*freeItem));
+    List_free(input_list, (freeItem));
     pthread_cancel(threadPID);
 } 
 
