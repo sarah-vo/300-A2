@@ -15,16 +15,16 @@ add_executable(
         receive.c receive.h
         soc.c soc.h)
 
-#add_executable(
-#        input
-#        input.h input.c
-#        list.h list.o
-#        global_var.h
-#)
+add_executable(
+        input
+        input.h input.c
+        list.h list.o
+        global_var.h
+)
 
-#target_precompile_headers(
-#        input
-#        PUBLIC
-#            list.h
-#
-#)
+target_precompile_headers(
+        input
+        PUBLIC
+            list.h
+
+)

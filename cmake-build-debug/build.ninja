@@ -64,6 +64,43 @@ build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
 build edit_cache: phony CMakeFiles/edit_cache.util
 
 # =============================================================================
+# Object build statements for EXECUTABLE target input
+
+
+#############################################
+# Order-only phony target for input
+
+build cmake_object_order_depends_target_input: phony || CMakeFiles/input.dir
+
+build CMakeFiles/input.dir/cmake_pch.h.pch: C_COMPILER__input_Debug /Users/sarah/Documents/CMPT_300/A2/cmake-build-debug/CMakeFiles/input.dir/cmake_pch.h.c | CMakeFiles/input.dir/cmake_pch.h || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/cmake_pch.h.pch.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11 -Winvalid-pch -Xclang -emit-pch -Xclang -include -Xclang /Users/sarah/Documents/CMPT_300/A2/cmake-build-debug/CMakeFiles/input.dir/cmake_pch.h -x c-header
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir
+
+build CMakeFiles/input.dir/input.c.o: C_COMPILER__input_Debug /Users/sarah/Documents/CMPT_300/A2/input.c | CMakeFiles/input.dir/cmake_pch.h CMakeFiles/input.dir/cmake_pch.h.pch || cmake_object_order_depends_target_input
+  DEP_FILE = CMakeFiles/input.dir/input.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk -std=gnu11 -Winvalid-pch -Xclang -include-pch -Xclang /Users/sarah/Documents/CMPT_300/A2/cmake-build-debug/CMakeFiles/input.dir/cmake_pch.h.pch -Xclang -include -Xclang /Users/sarah/Documents/CMPT_300/A2/cmake-build-debug/CMakeFiles/input.dir/cmake_pch.h
+  OBJECT_DIR = CMakeFiles/input.dir
+  OBJECT_FILE_DIR = CMakeFiles/input.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target input
+
+
+#############################################
+# Link the executable input
+
+build input: C_EXECUTABLE_LINKER__input_Debug ../list.o CMakeFiles/input.dir/input.c.o
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk
+  OBJECT_DIR = CMakeFiles/input.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = input
+  TARGET_PDB = input.dbg
+
+# =============================================================================
 # Object build statements for EXECUTABLE target A2
 
 
@@ -135,7 +172,7 @@ build A2: C_EXECUTABLE_LINKER__A2_Debug CMakeFiles/A2.dir/main.c.o CMakeFiles/A2
 #############################################
 # Folder: /Users/sarah/Documents/CMPT_300/A2/cmake-build-debug
 
-build all: phony A2
+build all: phony input A2
 
 # =============================================================================
 # Built-in targets
