@@ -51,7 +51,13 @@ void addr_initialize(char* rPort, char* rHostname)
 void* sendRoutine(){
     while(true){
 
-        char* msg = input_read();
+        char msg[MAX_LEN];
+        // TODO TEST FUNCTION
+//        if (!fgets(msg, sizeof msg, stdin)) {
+//            printf("Reading message failed!");
+//            exit(EXIT_READ_FAIL);
+//        }
+        //TODO TEST FUNCTION END
         long bytes_sent = sendto(sd, msg, strlen(msg), 0, addrInfo->ai_addr, addrInfo->ai_addrlen);
         if (bytes_sent == -1){
             printf("Send routine failed! \n");
@@ -62,12 +68,12 @@ void* sendRoutine(){
         }
         //Terminate if "!" is detected
         if(strcmp(msg,"!\n") == 0){
-            free(msg);
+            //free(msg);
             //TODO FILL IN MAIN_TERMINATE
             //main_terminate();
         }
         else {
-            free(msg);
+            //free(msg);
         }
     }
 }
@@ -86,18 +92,18 @@ void send_initialize(char* rPort, char* rHostname){
 
 
 }
-//////TODO TEST FUNCTION
-//int main(int argc, char* args[]){
-//    char* localPort = args[1];
-//    char* remoteName = args[2];
-//    char* remotePort = args[3];
-//    socket_initialize(localPort);
-//    input_initialize();
-//    send_initialize(remotePort, remoteName);
-//    struct addrInfo *test = addrInfo;
-//    pthread_join(sendThread, NULL);
-//
-//}
+////////TODO TEST FUNCTION
+int main(int argc, char* args[]){
+    char* localPort = args[1];
+    char* remoteName = args[2];
+    char* remotePort = args[3];
+    socket_initialize(localPort);
+    //input_initialize();
+    send_initialize(remotePort, remoteName);
+    struct addrInfo *test = (struct addrInfo *) addrInfo;
+    pthread_join(sendThread, NULL);
+
+}
 
 void send_terminate(){
     pthread_cancel(sendThread);

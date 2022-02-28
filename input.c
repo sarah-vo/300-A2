@@ -60,7 +60,7 @@ void *inputRoutine(){
         char* pMessage = (char*)malloc(len + 1);
         strcpy(pMessage, msg);
         //push to list
-        input_prepend(msg);
+        input_prepend(pMessage);
         //TODO TEST FUNCTION
         printf("%s", input_read());
     }
@@ -80,7 +80,7 @@ void input_initialize(){
 
 }
 
-//TODO TEST FUNCTION
+////TODO TEST FUNCTION
 //int main(){
 //    input_initialize();
 //    pthread_join(inputThread, NULL);
