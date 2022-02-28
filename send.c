@@ -53,10 +53,10 @@ void* sendRoutine(){
 
         char msg[MAX_LEN];
         // TODO TEST FUNCTION
-//        if (!fgets(msg, sizeof msg, stdin)) {
-//            printf("Reading message failed!");
-//            exit(EXIT_READ_FAIL);
-//        }
+        if (!fgets(msg, sizeof msg, stdin)) {
+            printf("Reading message failed!");
+            exit(EXIT_READ_FAIL);
+        }
         //TODO TEST FUNCTION END
         long bytes_sent = sendto(sd, msg, strlen(msg), 0, addrInfo->ai_addr, addrInfo->ai_addrlen);
         if (bytes_sent == -1){
