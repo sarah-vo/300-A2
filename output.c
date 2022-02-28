@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+
 #include "output.h"
 #include "receive.h"
 #include "list.h"
@@ -12,9 +13,8 @@
 #include "global_var.h"
 
 static pthread_t thread_output;
-static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
+// static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
-static int sd_out;
 static char* rxMsg;
 
 void output_initialize()
@@ -35,11 +35,17 @@ void *output_consume(void* unused)
         pthread_mutex_lock(&mutex_out);
         {
             // pthread_cond_wait(&empty_out, &mutex_out);
-            receive_print_msg();
+            
+            rxMsg = receive_print_msg();
+            
             // if(puts(rxMsg) < 0){
             //     perror("Error: failed to print the output to the screen.\n");
             //     exit(EXIT_FAILED);
             // }
+            if(strcmp(rxMsg, "!\n") == 0){
+                
+                return NULL;
+            }
         }
         pthread_mutex_unlock(&mutex_out);
     }
@@ -47,5 +53,9 @@ void *output_consume(void* unused)
 
 void output_terminate()
 {
+   
     pthread_cancel(thread_output);
+    pthread_join(thread_output, NULL); 
+
+    free(rxMsg);
 }

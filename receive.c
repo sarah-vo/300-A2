@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+
 #include "list.h"
 #include "receive.h"
 #include "soc.h"
@@ -16,7 +17,6 @@ static pthread_t thread_receive;
 static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
 static List* pReceived;
-static int sd_out;
 static char* rxMsg;
 
 
@@ -38,21 +38,35 @@ void receive_initialize()
 
 void* receive_produce(void* unused)
 {
-    struct sockaddr_in rSin;
-    unsigned int sin_len = sizeof(rSin);
-    char rx[MAX_LEN];
-
+    
     while(1){
+        struct sockaddr_in rSin;
+        unsigned int sin_len = sizeof(rSin);
+        char rx[MAX_LEN];
+
         memset(&rSin, 0, sizeof(rSin));
         rSin.sin_family = AF_INET;
         rSin.sin_addr.s_addr = htonl(INADDR_ANY);
         int bytesRx = recvfrom(sd, rx, MAX_LEN, 0, (struct sockaddr *) &rSin, &sin_len);
+        // int bytesRx = recvfrom(sd, rx, MAX_LEN, 0, NULL, NULL);
+
         if(bytesRx < 0){
             perror("Error: failed to receive message.\n");
             exit(EXIT_FAILED);
         }
+        rxMsg = (char *)malloc(sizeof(char)*(bytesRx+1));
         strcpy(rxMsg, rx);
+        rxMsg[bytesRx] = '\0';
+        // strncpy(rxMsg, rx, bytesRx);
+
         receive_add_to_list(rxMsg);
+
+        // termination message
+        if(strcmp(rxMsg, "!\n") == 0){
+            pthread_cancel(thread_receive);
+            return NULL;
+        }
+
         // sin_out.sin_port = htons();
     }
 }
@@ -73,9 +87,9 @@ void receive_add_to_list(char* rxMsg){
     pthread_mutex_unlock(&mutex_out);
 }
 
-void receive_print_msg(){
+char* receive_print_msg(){
     char* msg;
-
+    
     // check if any other thread is reading/writing the shared list
     pthread_mutex_lock(&mutex_out);
     {
@@ -86,12 +100,15 @@ void receive_print_msg(){
         msg = List_remove(pReceived);        
     }
     pthread_mutex_unlock(&mutex_out);
+    
+    // int checkPuts = puts(msg);
+    
 
     if(puts(msg) < 0){
         perror("Error: failed to print the output to the screen.\n");
         exit(EXIT_FAILED);
     }
-    // return msg;
+    return msg;
 }
 
 void receive_free_list(void* msg){
@@ -100,7 +117,8 @@ void receive_free_list(void* msg){
 
 void receive_terminate()
 {
-    pthread_cancel(thread_receive);
+    // pthread_cancel(thread_receive);
+    pthread_join(thread_receive, NULL);
 
     FREE_FN pFreeFn = &receive_free_list;
     List_free(pReceived, receive_free_list);
