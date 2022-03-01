@@ -7,7 +7,7 @@
 #include <string.h>
 
 static List* input_list;
-static pthread_mutex_t sendMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t inputMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t inputThread;
 pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 
@@ -17,22 +17,22 @@ pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 //Reads message from last position of list and delete it. The last one is the oldest message.
 char* input_read(){
     char *msg = NULL;
-    pthread_mutex_lock(&sendMutex);
+    pthread_mutex_lock(&inputMutex);
     {
         //wait until there is input from computer
         if(List_count(input_list) <= 0){
-            pthread_cond_wait(&inputWait, &sendMutex);
+            pthread_cond_wait(&inputWait, &inputMutex);
         }
         else{
             msg = List_trim(input_list);
         }
     }
-    pthread_mutex_unlock(&sendMutex);
+    pthread_mutex_unlock(&inputMutex);
     return msg;
 }
 
 void input_prepend(char* msg) {
-    pthread_mutex_lock(&sendMutex);
+    pthread_mutex_lock(&inputMutex);
     {
         int PREPEND_SUCCESS = (List_prepend(input_list, msg) == 0);
         if (!PREPEND_SUCCESS) {
@@ -44,7 +44,7 @@ void input_prepend(char* msg) {
             pthread_cond_signal(&inputWait);
         }
     }
-    pthread_mutex_unlock(&sendMutex);
+    pthread_mutex_unlock(&inputMutex);
 }
 
 void *inputRoutine(){
@@ -61,8 +61,8 @@ void *inputRoutine(){
         strcpy(pMessage, msg);
         //push to list
         input_prepend(pMessage);
-        //TODO TEST FUNCTION
-        printf("%s", input_read());
+        sendSignalChange(UNLOCK);
+
     }
 }
 
@@ -80,24 +80,11 @@ void input_initialize(){
 
 }
 
-////TODO TEST FUNCTION
-//int main(){
-//    input_initialize();
-//    pthread_join(inputThread, NULL);
-//    return 1;
-//}
-
-
-
-
-
-
 void freeItem(void* item){
     free(item);
 }
 
 void input_terminate() {
-    List_first(input_list);
     List_free(input_list, (freeItem));
     pthread_cancel(inputThread);
     int threadJoin = pthread_join(inputThread, NULL) == 0;
@@ -108,3 +95,10 @@ void input_terminate() {
     }
 
 }
+
+////TODO TEST FUNCTION
+//int main(){
+//    input_initialize();
+//    pthread_join(inputThread, NULL);
+//    return 1;
+//}
