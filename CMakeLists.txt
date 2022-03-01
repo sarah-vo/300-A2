@@ -13,7 +13,9 @@ add_executable(
         output.c output.c
         send.c send.h
         receive.c receive.h
-        soc.c soc.h global_var.c main.h)
+        soc.c soc.h
+        global_var.c
+        list.o)
 
 add_executable(
         inputDEBUG

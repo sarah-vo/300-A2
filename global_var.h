@@ -17,4 +17,8 @@ static int EXIT_LIST_FAIL = -3;
 static int EXIT_READ_FAIL = -4;
 
 //signals
+enum SIGNAL{
+    UNLOCK,
+    LOCK
+};
 #endif //A2_GLOBAL_VAR_H

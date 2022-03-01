@@ -10,6 +10,7 @@
 #include "receive.h"
 #include "soc.h"
 #include "global_var.h"
+#include "main.h"
 
 void receive_add_to_list(char* rxMsg);
 
@@ -63,8 +64,7 @@ void* receive_produce(void* unused)
 
         // termination message
         if(strcmp(rxMsg, "!\n") == 0){
-            pthread_cancel(thread_receive);
-            return NULL;
+            main_terminate();
         }
 
         // sin_out.sin_port = htons();
@@ -97,7 +97,8 @@ char* receive_print_msg(){
         if(List_count(pReceived) == 0){
             pthread_cond_wait(&empty_out, &mutex_out);
         }
-        msg = List_remove(pReceived);        
+        //TODO: I changed to List_trim so that the value can always be the oldest
+        msg = List_trim(pReceived);
     }
     pthread_mutex_unlock(&mutex_out);
     
