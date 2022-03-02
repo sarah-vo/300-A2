@@ -5,12 +5,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
 
 static List* input_list;
 static pthread_mutex_t inputMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t inputThread;
-pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 
 
 
@@ -37,7 +35,7 @@ void *inputRoutine(){
         //read user inputRoutine
 
         char input[MAX_LEN];
-        if (!fgets(input, sizeof input, stdin)) {
+        if (!fgets(input, (int)sizeof input, stdin)) {
             printf("Reading message failed!");
             exit(EXIT_READ_FAIL);
         }
@@ -80,12 +78,7 @@ void input_terminate() {
         printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
 
     }
-    int threadJoin = pthread_join(inputThread, NULL) == 0;
-    if (threadJoin != 0) {
-        printf("failed to join thread! (input), error code: %s\n", strerror(threadJoin));
-        exit(EXIT_THREAD_FAIL);
-
-    }
+    pthread_join(inputThread, NULL);
 
 }
 

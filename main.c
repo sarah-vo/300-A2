@@ -29,7 +29,6 @@ int main(int argc,char *argv[]) {
     send_initialize(rPort, rHostName);
     receive_initialize();
     output_initialize();
-    //pthread_exit(NULL);
 
     pthread_mutex_lock(&terminateMutex);{
         pthread_cond_wait(&terminateSignal, &terminateMutex);
@@ -39,18 +38,12 @@ int main(int argc,char *argv[]) {
 
 
     output_terminate();
-    printf("output terminated\n");
-
     receive_terminate();
-    printf("receive terminated\n");
-
-    send_terminate();
-    printf("Send terminated\n");
-
-    input_terminate();
-    printf("input terminated\n");
-
     socket_close();
+    send_terminate();
+    input_terminate();
+    printf("Chat session ended! Have a good day!\n");
+    return 0;
 
 
 

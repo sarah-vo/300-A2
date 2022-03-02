@@ -3,13 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
 
 #include "output.h"
 #include "receive.h"
-#include "list.h"
-#include "soc.h"
 #include "global_var.h"
 
 static pthread_t thread_output;
@@ -34,14 +30,7 @@ void *output_consume(void* unused)
         // Check and wait until receive_thread signals to consume and print
         pthread_mutex_lock(&mutex_out);
         {
-            // pthread_cond_wait(&empty_out, &mutex_out);
-            
             rxMsg = receive_print_msg();
-            
-            // if(puts(rxMsg) < 0){
-            //     perror("Error: failed to print the output to the screen.\n");
-            //     exit(EXIT_FAILED);
-            // }
             if(strcmp(rxMsg, "!") == 0){
                 
                 return NULL;
@@ -54,10 +43,7 @@ void *output_consume(void* unused)
 void output_terminate()
 {
     pthread_cancel(thread_output);
-    bool joinThread = (pthread_join(thread_output, NULL) == 0);
-    if(!joinThread){
-        printf("failed to join thread! (send). error code: %s\n", strerror(joinThread));
-    }
+    pthread_join(thread_output, NULL);
 
     free(rxMsg);
 }

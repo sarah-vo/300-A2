@@ -14,8 +14,6 @@
 #include "soc.h"
 
 static pthread_t sendThread;
-struct sockaddr_in remoteAddress;
-socklen_t remoteAddress_len;
 struct addrinfo *addrInfo;
 
 pthread_mutex_t sendMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -34,7 +32,6 @@ void addr_initialize(char* rPort, char* rHostname)
         printf("Getting address info failed!\n");
         exit(EXIT_FAILURE);
     }
-    remoteAddress_len = addrInfo->ai_addrlen;
 }
 
 void* sendRoutine(){
@@ -94,10 +91,6 @@ void send_terminate(){
         printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
 
     }
-    int threadJoin = pthread_join(sendThread, NULL) == 0;
-    if(threadJoin != 0){
-        printf("failed to join thread! (send). error code: %s\n", strerror(threadJoin));
-//        exit(EXIT_THREAD_FAIL);
-    }
+    pthread_join(sendThread, NULL);
 }
 

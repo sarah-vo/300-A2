@@ -12,7 +12,7 @@
 #include "global_var.h"
 #include "main.h"
 
-void receive_add_to_list(char* rxMsg);
+void receive_add_to_list(char* receivedMessage);
 
 static pthread_t thread_receive;
 static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
@@ -48,8 +48,7 @@ void* receive_produce(void* unused)
         memset(&rSin, 0, sizeof(rSin));
         rSin.sin_family = AF_INET;
         rSin.sin_addr.s_addr = htonl(INADDR_ANY);
-        int bytesRx = recvfrom(sd, rx, MAX_LEN, 0, (struct sockaddr *) &rSin, &sin_len);
-        // int bytesRx = recvfrom(sd, rx, MAX_LEN, 0, NULL, NULL);
+        int bytesRx = (int)recvfrom(sd, rx, MAX_LEN, 0, (struct sockaddr *) &rSin, &sin_len);
 
         if(bytesRx < 0){
             perror("Error: failed to receive message.\n");
@@ -58,7 +57,6 @@ void* receive_produce(void* unused)
         rxMsg = (char *)malloc(sizeof(char)*(bytesRx+1));
         strcpy(rxMsg, rx);
         rxMsg[bytesRx] = '\0';
-        // strncpy(rxMsg, rx, bytesRx);
 
         receive_add_to_list(rxMsg);
 
@@ -66,16 +64,14 @@ void* receive_produce(void* unused)
         if(strcmp(rxMsg, "!") == 0){
             signal_terminate();
         }
-
-        // sin_out.sin_port = htons();
     }
 }
 
-void receive_add_to_list(char* rxMsg){
+void receive_add_to_list(char* receivedMessage){
     // check if any other thread is reading/writing the shared list
     pthread_mutex_lock(&mutex_out);
     {
-        if(List_prepend(pReceived, rxMsg) != 0){
+        if(List_prepend(pReceived, receivedMessage) != 0){
             perror("Error: failed to produce in receive_thread.\n");
             exit(EXIT_FAILED);
         }
@@ -102,8 +98,6 @@ char* receive_print_msg(){
     }
     pthread_mutex_unlock(&mutex_out);
     
-    // int checkPuts = puts(msg);
-    
 
     if(puts(msg) < 0){
         perror("Error: failed to print the output to the screen.\n");
@@ -119,10 +113,7 @@ void receive_free_list(void* msg){
 void receive_terminate()
 {
     pthread_cancel(thread_receive);
-    bool joinThread = (pthread_join(thread_receive, NULL) == 0);
-    if(!joinThread){
-        printf("failed to join thread! (send). error code: %s\n", strerror(joinThread));
-    }
+    pthread_join(thread_receive, NULL);
     FREE_FN pFreeFn = &receive_free_list;
     List_free(pReceived, receive_free_list);
 }
