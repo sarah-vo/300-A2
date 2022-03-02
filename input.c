@@ -16,19 +16,7 @@ pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
 
 //Reads message from last position of list and delete it. The last one is the oldest message.
 char* input_read(){
-    char *msg = NULL;
-    pthread_mutex_lock(&inputMutex);
-    {
-        //wait until there is input from computer
-        if(List_count(input_list) <= 0){
-            pthread_cond_wait(&inputWait, &inputMutex);
-        }
-        else{
-            msg = List_trim(input_list);
-        }
-    }
-    pthread_mutex_unlock(&inputMutex);
-    return msg;
+    return List_trim(input_list);
 }
 
 void input_prepend(char* msg) {
@@ -39,9 +27,6 @@ void input_prepend(char* msg) {
             printf("Failed to prepend to inputRoutine list!\n");
             free(msg);
             exit(EXIT_LIST_FAIL);
-        }
-        else if(List_count(input_list) == 1){
-            pthread_cond_signal(&inputWait);
         }
     }
     pthread_mutex_unlock(&inputMutex);
