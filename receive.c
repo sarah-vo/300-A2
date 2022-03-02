@@ -63,8 +63,8 @@ void* receive_produce(void* unused)
         receive_add_to_list(rxMsg);
 
         // termination message
-        if(strcmp(rxMsg, "!\n") == 0){
-            main_terminate();
+        if(strcmp(rxMsg, "!") == 0){
+            signal_terminate();
         }
 
         // sin_out.sin_port = htons();
@@ -118,9 +118,11 @@ void receive_free_list(void* msg){
 
 void receive_terminate()
 {
-    // pthread_cancel(thread_receive);
-    pthread_join(thread_receive, NULL);
-
+    pthread_cancel(thread_receive);
+    bool joinThread = (pthread_join(thread_receive, NULL) == 0);
+    if(!joinThread){
+        printf("failed to join thread! (send). error code: %s\n", strerror(joinThread));
+    }
     FREE_FN pFreeFn = &receive_free_list;
     List_free(pReceived, receive_free_list);
 }

@@ -42,7 +42,7 @@ void *output_consume(void* unused)
             //     perror("Error: failed to print the output to the screen.\n");
             //     exit(EXIT_FAILED);
             // }
-            if(strcmp(rxMsg, "!\n") == 0){
+            if(strcmp(rxMsg, "!") == 0){
                 
                 return NULL;
             }
@@ -53,9 +53,11 @@ void *output_consume(void* unused)
 
 void output_terminate()
 {
-   
     pthread_cancel(thread_output);
-    pthread_join(thread_output, NULL); 
+    bool joinThread = (pthread_join(thread_output, NULL) == 0);
+    if(!joinThread){
+        printf("failed to join thread! (send). error code: %s\n", strerror(joinThread));
+    }
 
     free(rxMsg);
 }

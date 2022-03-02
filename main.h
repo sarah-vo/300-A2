@@ -6,5 +6,5 @@
 #define A2_MAIN_H
 
 //TODO Fill in
-void main_terminate();
+void signal_terminate();
 #endif //A2_MAIN_H

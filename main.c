@@ -5,14 +5,14 @@
 #include "output.h"
 #include "soc.h"
 
-void main_terminate(){
-    send_terminate();
-    output_terminate();
-    input_terminate();
-    receive_terminate();
-    socket_close();
-    exit(EXIT_SUCCESS);
+pthread_mutex_t terminateMutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t  terminateSignal = PTHREAD_COND_INITIALIZER;
+
+void signal_terminate(){
+    pthread_cond_signal(&terminateSignal);
 }
+
+
 
 int main(int argc,char *argv[]) {
     if(argc != 4){
@@ -29,6 +29,29 @@ int main(int argc,char *argv[]) {
     send_initialize(rPort, rHostName);
     receive_initialize();
     output_initialize();
-    pthread_exit(NULL);
-    
+    //pthread_exit(NULL);
+
+    pthread_mutex_lock(&terminateMutex);{
+        pthread_cond_wait(&terminateSignal, &terminateMutex);
+    }
+    pthread_mutex_unlock(&terminateMutex);
+
+
+
+    output_terminate();
+    printf("output terminated\n");
+
+    receive_terminate();
+    printf("receive terminated\n");
+
+    send_terminate();
+    printf("Send terminated\n");
+
+    input_terminate();
+    printf("input terminated\n");
+
+    socket_close();
+
+
+
 }

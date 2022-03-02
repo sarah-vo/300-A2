@@ -23,9 +23,7 @@ pthread_cond_t  sendCond = PTHREAD_COND_INITIALIZER;
 
 //using sd from soc.h
 
-//TODO TEST FUNC
-pthread_mutex_t mutexTEST = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t condTEST = PTHREAD_COND_INITIALIZER;
+
 
 void addr_initialize(char* rPort, char* rHostname)
 {
@@ -48,32 +46,27 @@ void* sendRoutine(){
         pthread_mutex_unlock(&sendMutex);
 
         char* msg = input_read();
-        // TODO TEST FUNCTION
-//        if (!fgets(msg, sizeof msg, stdin)) {
-//            printf("Reading message failed!");
-//            exit(EXIT_READ_FAIL);
-//        }
-        //TODO TEST FUNCTION END
+
         long bytes_sent = sendto(sd, msg, strlen(msg), 0, addrInfo->ai_addr, addrInfo->ai_addrlen);
+        //abnormal case
         if (bytes_sent == -1){
             printf("Send routine failed! \n");
             exit(EXIT_FAILED);
         }
-        //TODO TEST FUNCTION
-//        else{
-//            printf("Printed: %s", msg);
-//        }
-        //Terminate if "!" is detected
-        bool terminateChat = strcmp(msg,"!\n") == 0;
-        if(terminateChat){
-            printf("Keystroke ! detected");
-            free(msg);
-            //TODO FILL IN MAIN_TERMINATE
-            main_terminate();
+        //normal case
+        else{
+            //user wants to terminate s-talk
+            bool terminateChat = strcmp(msg,"!") == 0;
+            if(terminateChat){
+                free(msg);
+                signal_terminate();
+            }
+            //normal execution
+            else {
+                free(msg);
+            }
         }
-        else {
-            free(msg);
-        }
+
     }
 }
 
@@ -88,7 +81,7 @@ void send_initialize(char* rPort, char* rHostname){
 
 }
 
-void sendSignalChange(enum SIGNAL signal){
+void sendUnlockSignal(enum SIGNAL signal){
     if(signal == UNLOCK){
         pthread_cond_signal(&sendCond);
     }
@@ -106,11 +99,15 @@ void sendSignalChange(enum SIGNAL signal){
 //}
 
 void send_terminate(){
-    pthread_cancel(sendThread);
+    int cancelThread = pthread_cancel(sendThread);
+    if(cancelThread != 0){
+        printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
+
+    }
     int threadJoin = pthread_join(sendThread, NULL) == 0;
     if(threadJoin != 0){
-        printf("failed to join thread!\n");
-        exit(EXIT_THREAD_FAIL);
+        printf("failed to join thread! (send). error code: %s\n", strerror(threadJoin));
+//        exit(EXIT_THREAD_FAIL);
     }
 }
 

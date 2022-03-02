@@ -5,12 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 static List* input_list;
 static pthread_mutex_t inputMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_t inputThread;
 pthread_cond_t inputWait = PTHREAD_COND_INITIALIZER;
-
 
 
 
@@ -50,18 +50,22 @@ void input_prepend(char* msg) {
 void *inputRoutine(){
     while(1){
         //read user inputRoutine
-        char msg[MAX_LEN];
-        if (!fgets(msg, sizeof msg, stdin)) {
+
+        char input[MAX_LEN];
+        if (!fgets(input, sizeof input, stdin)) {
             printf("Reading message failed!");
             exit(EXIT_READ_FAIL);
         }
 
+
+        char* msg = input;
+        msg[strcspn(msg,"\n")] = '\0';
         int len = (int)strlen(msg);
         char* pMessage = (char*)malloc(len + 1);
         strcpy(pMessage, msg);
         //push to list
         input_prepend(pMessage);
-        sendSignalChange(UNLOCK);
+        sendUnlockSignal(UNLOCK);
 
     }
 }
@@ -86,10 +90,14 @@ void freeItem(void* item){
 
 void input_terminate() {
     List_free(input_list, (freeItem));
-    pthread_cancel(inputThread);
+    int cancelThread = pthread_cancel(inputThread);
+    if(cancelThread != 0){
+        printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
+
+    }
     int threadJoin = pthread_join(inputThread, NULL) == 0;
     if (threadJoin != 0) {
-        printf("failed to join thread!\n");
+        printf("failed to join thread! (input), error code: %s\n", strerror(threadJoin));
         exit(EXIT_THREAD_FAIL);
 
     }

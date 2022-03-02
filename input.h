@@ -10,5 +10,5 @@ char* input_read();
 
 void input_terminate();
 
-void sendSignalChange(enum SIGNAL signal);
+void sendUnlockSignal(enum SIGNAL signal);
 #endif //A2_INPUT_H
