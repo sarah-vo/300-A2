@@ -5,6 +5,5 @@
 #ifndef A2_MAIN_H
 #define A2_MAIN_H
 
-//TODO Fill in
 void signal_terminate();
 #endif //A2_MAIN_H

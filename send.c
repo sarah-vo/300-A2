@@ -86,17 +86,7 @@ void sendUnlockSignal(enum SIGNAL signal){
         pthread_cond_signal(&sendCond);
     }
 }
-//////////TODO TEST FUNCTION
-//int main(int argc, char* args[]){
-//    char* localPort = args[1];
-//    char* remoteName = args[2];
-//    char* remotePort = args[3];
-//    socket_initialize(localPort);
-//    input_initialize();
-//    send_initialize(remotePort, remoteName);
-//    struct addrInfo *test = (struct addrInfo *) addrInfo;
-//    pthread_exit(NULL);
-//}
+
 
 void send_terminate(){
     int cancelThread = pthread_cancel(sendThread);

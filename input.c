@@ -104,9 +104,4 @@ void input_terminate() {
 
 }
 
-////TODO TEST FUNCTION
-//int main(){
-//    input_initialize();
-//    pthread_join(inputThread, NULL);
-//    return 1;
-//}
+
