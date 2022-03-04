@@ -9,4 +9,4 @@ sendDEBUG:
 	gcc -g input.c send.c soc.c list.o -o sendDEBUG -lpthread
 
 clean:
-	rm soc
+	rm s-talk
