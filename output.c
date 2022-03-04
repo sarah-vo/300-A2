@@ -9,10 +9,13 @@
 #include "global_var.h"
 
 static pthread_t thread_output;
-// static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
 static char* rxMsg;
 
+/**
+ * @brief Creates a pthread thread_output
+ * 
+ */
 void output_initialize()
 {
     // create a pthread_t thread_output and check if it's successfully completed
@@ -22,6 +25,12 @@ void output_initialize()
     }
 }
 
+/**
+ * @brief Consumes an element from the shared list and prints it on the terminal
+ * 
+ * @param unused 
+ * @return void* 
+ */
 void *output_consume(void* unused)
 {
 
@@ -30,20 +39,28 @@ void *output_consume(void* unused)
         // Check and wait until receive_thread signals to consume and print
         pthread_mutex_lock(&mutex_out);
         {
-            rxMsg = receive_print_msg();
-            if(strcmp(rxMsg, "!") == 0){
-                
+            rxMsg = receive_print_msg();    // print msg
+            if(strcmp(rxMsg, "!") == 0){    // return null if ! is received
+                free(rxMsg);
                 return NULL;
             }
+            free(rxMsg);
         }
         pthread_mutex_unlock(&mutex_out);
     }
 }
 
+/**
+ * @brief Cancels and joins pthread thread_output 
+ * 
+ */
 void output_terminate()
 {
-    pthread_cancel(thread_output);
-    pthread_join(thread_output, NULL);
+    if(pthread_cancel(thread_output) != 0){
+        printf("Failed to cancel output_thread. error code: %s\n", strerror(thread_output));
+    }
 
-    free(rxMsg);
+    if(pthread_join(thread_output, NULL) != 0){
+        printf("failed to join output_thread. error code: %s\n", strerror(thread_output));
+    }
 }

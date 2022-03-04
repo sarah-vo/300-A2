@@ -21,8 +21,12 @@ pthread_cond_t  sendCond = PTHREAD_COND_INITIALIZER;
 
 //using sd from soc.h
 
-
-
+/**
+ * @brief Retrieve address from its host/remote name
+ * 
+ * @param rPort 
+ * @param rHostname 
+ */
 void addr_initialize(char* rPort, char* rHostname)
 {
 
@@ -34,6 +38,12 @@ void addr_initialize(char* rPort, char* rHostname)
     }
 }
 
+/**
+ * @brief Consumes an element from the shared list (between send and input threads)
+ * and sends the retrieved message to the receiving thread at the remote port/address
+ * 
+ * @return void* 
+ */
 void* sendRoutine(){
     while(true){
         pthread_mutex_lock(&sendMutex);
@@ -44,12 +54,15 @@ void* sendRoutine(){
 
         char* msg = input_read();
 
+        // send the retrieved message (msg) to the remote address
         long bytes_sent = sendto(sd, msg, strlen(msg), 0, addrInfo->ai_addr, addrInfo->ai_addrlen);
+        
         //abnormal case
         if (bytes_sent == -1){
             printf("Send routine failed! \n");
             exit(EXIT_FAILED);
         }
+
         //normal case
         else{
             //user wants to terminate s-talk
@@ -67,6 +80,12 @@ void* sendRoutine(){
     }
 }
 
+/**
+ * @brief Creates a pthread sendThread
+ * 
+ * @param rPort 
+ * @param rHostname 
+ */
 void send_initialize(char* rPort, char* rHostname){
 
     bool threadCreated = (pthread_create(&sendThread, NULL, sendRoutine, NULL) == 0);
@@ -84,13 +103,19 @@ void sendUnlockSignal(enum SIGNAL signal){
     }
 }
 
-
+/**
+ * @brief Cancels and joins pthread sendThread
+ * 
+ */
 void send_terminate(){
     int cancelThread = pthread_cancel(sendThread);
     if(cancelThread != 0){
         printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
 
     }
-    pthread_join(sendThread, NULL);
+
+    if(pthread_join(sendThread, NULL) != 0){
+        printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
+    }
 }
 

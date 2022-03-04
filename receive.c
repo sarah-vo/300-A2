@@ -17,10 +17,15 @@ void receive_add_to_list(char* receivedMessage);
 static pthread_t thread_receive;
 static pthread_cond_t empty_out = PTHREAD_COND_INITIALIZER;
 static pthread_mutex_t mutex_out = PTHREAD_MUTEX_INITIALIZER;
+
 static List* pReceived;
 static char* rxMsg;
 
-
+/**
+ * @brief 
+ * Creates a list pReceived that will be shared between receive and output threads
+ * and create a pthread thread_receive
+ */
 void receive_initialize()
 {
     // Create a list pReceived that will store all the messages received via udp
@@ -37,6 +42,13 @@ void receive_initialize()
     }
 }
 
+/**
+ * @brief Receives data from remote address/port and stores it in the shared list 
+ * until the termination code (!) is received
+ * 
+ * @param unused 
+ * @return void* 
+ */
 void* receive_produce(void* unused)
 {
     
@@ -67,6 +79,11 @@ void* receive_produce(void* unused)
     }
 }
 
+/**
+ * @brief 
+ * A helper function that will take a char pointer, produces an element and adds it to the shared list
+ * @param receivedMessage 
+ */
 void receive_add_to_list(char* receivedMessage){
     // check if any other thread is reading/writing the shared list
     pthread_mutex_lock(&mutex_out);
@@ -83,6 +100,11 @@ void receive_add_to_list(char* receivedMessage){
     pthread_mutex_unlock(&mutex_out);
 }
 
+/**
+ * @brief Consumes an element from the shared list and prints it.
+ * 
+ * @return char* 
+ */
 char* receive_print_msg(){
     char* msg;
     
@@ -93,7 +115,7 @@ char* receive_print_msg(){
         if(List_count(pReceived) == 0){
             pthread_cond_wait(&empty_out, &mutex_out);
         }
-        //TODO: I changed to List_trim so that the value can always be the oldest
+        // List_trim so that the value can always be the oldest
         msg = List_trim(pReceived);
     }
     pthread_mutex_unlock(&mutex_out);
@@ -110,10 +132,20 @@ void receive_free_list(void* msg){
     msg = NULL;
 }
 
+/**
+ * @brief Cancels and joins pthread thread_receive and frees the shared list.
+ * 
+ */
 void receive_terminate()
 {
-    pthread_cancel(thread_receive);
-    pthread_join(thread_receive, NULL);
+    if(pthread_cancel(thread_receive) != 0){
+        printf("Failed to cancel receive_thread error code: %s\n", strerror(thread_receive));
+    }
+
+    if(pthread_join(thread_receive, NULL) != 0){
+        printf("Failed to join receive_thread error code: %s\n", strerror(thread_receive));
+    }
+
     FREE_FN pFreeFn = &receive_free_list;
     List_free(pReceived, receive_free_list);
 }
