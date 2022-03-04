@@ -51,7 +51,6 @@ void receive_initialize()
  */
 void* receive_produce(void* unused)
 {
-    
     while(1){
         struct sockaddr_in rSin;
         unsigned int sin_len = sizeof(rSin);
@@ -120,7 +119,6 @@ char* receive_print_msg(){
     }
     pthread_mutex_unlock(&mutex_out);
     
-
     if(puts(msg) < 0){
         perror("Error: failed to print the output to the screen.\n");
         exit(EXIT_FAILED);

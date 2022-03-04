@@ -5,7 +5,6 @@
 
 void input_initialize();
 
-
 char* input_read();
 
 void input_terminate();

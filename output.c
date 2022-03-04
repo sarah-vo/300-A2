@@ -33,7 +33,6 @@ void output_initialize()
  */
 void *output_consume(void* unused)
 {
-
     while(1){
         
         // Check and wait until receive_thread signals to consume and print

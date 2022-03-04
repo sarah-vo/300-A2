@@ -35,12 +35,12 @@ int main(int argc,char *argv[]) {
     }
     pthread_mutex_unlock(&terminateMutex);
 
-
     output_terminate();
     receive_terminate();
     send_terminate();
     input_terminate();
     socket_close();
     printf("\nChat session ended! Have a good day!\n");
+    
     return 0;
 }

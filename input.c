@@ -61,7 +61,6 @@ void *inputRoutine(){
         //push to list
         input_prepend(pMessage);
         sendUnlockSignal(UNLOCK);
-
     }
 }
 
@@ -102,5 +101,3 @@ void input_terminate() {
         printf("failed to join thread! (input). error code: %s\n", strerror(cancelThread));
     }
 }
-
-

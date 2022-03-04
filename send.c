@@ -29,9 +29,7 @@ pthread_cond_t  sendCond = PTHREAD_COND_INITIALIZER;
  */
 void addr_initialize(char* rPort, char* rHostname)
 {
-
     //applying getaddrinfo
-
     if(getaddrinfo(rHostname,rPort, NULL, &addrInfo) != 0){
         printf("Getting address info failed!\n");
         exit(EXIT_FAILURE);
@@ -76,7 +74,6 @@ void* sendRoutine(){
                 free(msg);
             }
         }
-
     }
 }
 
@@ -94,7 +91,6 @@ void send_initialize(char* rPort, char* rHostname){
         exit(EXIT_THREAD_FAIL);
     }
     addr_initialize(rPort, rHostname);
-
 }
 
 void sendUnlockSignal(enum SIGNAL signal){
@@ -111,11 +107,9 @@ void send_terminate(){
     int cancelThread = pthread_cancel(sendThread);
     if(cancelThread != 0){
         printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
-
     }
 
     if(pthread_join(sendThread, NULL) != 0){
         printf("failed to cancel thread! (send). error code: %s\n", strerror(cancelThread));
     }
 }
-
